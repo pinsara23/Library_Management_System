@@ -17,7 +17,7 @@ public class UserServices {
         PreparedStatement preSat = null;
         try {
             connection = JDBCUtil.getConnection();
-            String query = "insert into users(name,email,password,satus) values(?,?,?,?)";
+            String query = "insert into users(name,email,password,status) values(?,?,?,?)";
             preSat = connection.prepareStatement(query, preSat.RETURN_GENERATED_KEYS);
             preSat.setString(1, user.getUserName());
             preSat.setString(2, user.getUserEmail());
@@ -34,24 +34,23 @@ public class UserServices {
         return userId;
     }
 
-    public static boolean updateUser(UserDTO user) {
+    public static boolean updateUser(UserDTO user, int id) {
         boolean result = false;
         Connection connection = null;
         PreparedStatement preSat = null;
         try {
             connection = JDBCUtil.getConnection();
-            String query = "update users set name=?, email=?, password=?, satus=? where id=?";
+            String query = "update users set name=?, email=?, password=? where id=?";
             preSat = connection.prepareStatement(query);
             preSat.setString(1, user.getUserName());
             preSat.setString(2, user.getUserEmail());
             preSat.setString(3, user.getUserPassword());
-            preSat.setBoolean(4, user.getStatus());
-            preSat.setInt(5, user.getUserId());
+            preSat.setInt(4, id);
             int rowsAffected = preSat.executeUpdate();
             if (rowsAffected > 0) {
                 result = true;
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return result;
@@ -63,7 +62,7 @@ public class UserServices {
         ArrayList<UserDTO> userList = new ArrayList<>();
         try {
             connection = JDBCUtil.getConnection();
-            String query = "select * from users";
+            String query = "select * from users order by id";
             preSat = connection.prepareStatement(query);
             ResultSet rs = preSat.executeQuery();
             while (rs.next()) {
@@ -72,7 +71,31 @@ public class UserServices {
                 user.setUserName(rs.getString("name"));
                 user.setUserEmail(rs.getString("email"));
                 user.setUserPassword(rs.getString("password"));
-                user.setStatus(rs.getBoolean("satus"));
+                user.setStatus(rs.getBoolean("status"));
+                userList.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userList;
+    }
+
+    public static ArrayList<UserDTO> getAllBlockedUsers() {
+        Connection connection = null;
+        PreparedStatement preSat = null;
+        ArrayList<UserDTO> userList = new ArrayList<>();
+        try {
+            connection = JDBCUtil.getConnection();
+            String query = "select * from users where status = false order by id";
+            preSat = connection.prepareStatement(query);
+            ResultSet rs = preSat.executeQuery();
+            while (rs.next()) {
+                UserDTO user = new UserDTO();
+                user.setUserId(rs.getInt(1));
+                user.setUserName(rs.getString("name"));
+                user.setUserEmail(rs.getString("email"));
+                user.setUserPassword(rs.getString("password"));
+                user.setStatus(rs.getBoolean("status"));
                 userList.add(user);
             }
         } catch (SQLException e) {
@@ -97,7 +120,7 @@ public class UserServices {
                 user.setUserName(rs.getString("name"));
                 user.setUserEmail(rs.getString("email"));
                 user.setUserPassword(rs.getString("password"));
-                user.setStatus(rs.getBoolean("satus"));
+                user.setStatus(rs.getBoolean("status"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,6 +135,7 @@ public class UserServices {
         try {
             connection = JDBCUtil.getConnection();
             String query = "update users set status=? where id=?";
+            preSat = connection.prepareStatement(query);
             preSat.setBoolean(1, false);
             preSat.setInt(2, userId);
             result = preSat.execute();
@@ -128,6 +152,7 @@ public class UserServices {
         try {
             connection = JDBCUtil.getConnection();
             String query = "update users set status=? where id=?";
+            preSat = connection.prepareStatement(query);
             preSat.setBoolean(1, true);
             preSat.setInt(2, userId);
             result = preSat.execute();

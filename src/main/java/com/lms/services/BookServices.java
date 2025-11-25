@@ -43,7 +43,7 @@ public class BookServices {
         ArrayList<BookDto> bookList = new ArrayList<>();
         try {
             connection = JDBCUtil.getConnection();
-            String query = "select * from books";
+            String query = "select * from books order by id";
             preSat = connection.prepareStatement(query);
             ResultSet rs = preSat.executeQuery();
             while (rs.next()) {
@@ -74,6 +74,28 @@ public class BookServices {
             preSat.setInt(1, amount);
             preSat.setInt(2, bookId);
             result = preSat.execute();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public int updateBook(int bookId, BookDto book){
+        int result = 0;
+        Connection connection = null;
+        PreparedStatement preSat = null;
+        try {
+            connection = JDBCUtil.getConnection();
+            String query = "update books set name = ? ,author = ? ,publisher = ? ,isbn = ? ,copies = ? where id = ?";
+            preSat = connection.prepareStatement(query);
+            preSat.setString(1, book.getBookName());
+            preSat.setString(2, book.getBookAuthor());
+            preSat.setString(3, book.getBookPublisher());
+            preSat.setLong(4, book.getBookISBN());
+            preSat.setInt(5, book.getNoOfCopies());
+            preSat.setInt(6, bookId);
+            result = preSat.executeUpdate();
         }catch (SQLException e) {
             e.printStackTrace();
         }
