@@ -38,6 +38,12 @@ public class BooksPanel extends JPanel {
         });
         upperPanel.add(userPanelButton,BorderLayout.EAST);
 
+        JButton recordPanelButton  = new JButton("Record Panel");
+        recordPanelButton.addActionListener(e->{
+            cardLayout.show(mainPanel,"recordPanel");
+        });
+        upperPanel.add(recordPanelButton,BorderLayout.WEST);
+
         add(upperPanel, BorderLayout.NORTH);
 
         createTable();

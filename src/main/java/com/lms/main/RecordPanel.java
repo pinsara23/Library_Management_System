@@ -34,9 +34,9 @@ public class RecordPanel extends JPanel {
         upperPanel.add(titleLabel,BorderLayout.CENTER);
 
         JButton bookPanelButton = new JButton("Book Panel");
-//        userPanelButton.addActionListener(e->{
-//            cardLayout.show(mainPanel,"userPanel");
-//        });
+        bookPanelButton.addActionListener(e->{
+            cardLayout.show(mainPanel,"booksPanel");
+        });
         upperPanel.add(bookPanelButton,BorderLayout.EAST);
 
         add(upperPanel, BorderLayout.NORTH);
@@ -289,12 +289,6 @@ public class RecordPanel extends JPanel {
         }
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Record Panel Test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.add(new RecordPanel(new CardLayout(), new JPanel()));
-        frame.setVisible(true);
-    }
+
 
 }
